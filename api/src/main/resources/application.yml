@@ -1,0 +1,29 @@
+spring:
+  application.name: notes-api
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+    url: jdbc:postgresql://${POSTGRES_HOST}:5432/${NOTES_DATABASE}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWD}
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://${POSTGRES_HOST}:5432/${NOTES_DATABASE}
+    password: ${POSTGRES_PASSWD}
+    user: ${POSTGRES_USER}
+    schemas:
+      - public
+    locations:
+      - classpath:db/migration
+
+  springdoc:
+    swagger-ui:
+      disable-swagger-default-url: true
+      path: /notes/api/v1/swagger
+    api-docs:
+      path: /notes/v3/api-docs/swagger-config
