@@ -21,9 +21,9 @@ spring:
     locations:
       - classpath:db/migration
 
-  springdoc:
-    swagger-ui:
-      disable-swagger-default-url: true
-      path: /notes/api/v1/swagger
-    api-docs:
-      path: /notes/v3/api-docs/swagger-config
+  # springdoc:
+  #   swagger-ui:
+  #     disable-swagger-default-url: true
+  #     path: /notes/api/v1/swagger
+  #   api-docs:
+  #     path: /notes/v3/api-docs/swagger-config

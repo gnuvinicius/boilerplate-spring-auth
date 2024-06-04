@@ -15,45 +15,46 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Service
-public class AuthTokenFilter extends OncePerRequestFilter  {
+public class AuthTokenFilter extends OncePerRequestFilter {
 
-	@Autowired
-	private TokenService tokenService;
+    @Autowired
+    private TokenService tokenService;
 
-	@Autowired
-	private UserRepository userRepository;
-
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filter)
-			throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filter)
+            throws ServletException, IOException {
 
-		var token = getTokenByRequest(request);
+        var token = getTokenByRequest(request);
 
-		if (token != null) {
-			var email = tokenService.validateToken(token);
-			
-			if (!email.isEmpty()) {				
-				var optional = userRepository.buscaPorEmail(email, EnumStatus.ATIVO);
-				
-				if (optional.isPresent()) {
-					var user = optional.get();
-					var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-					SecurityContextHolder.getContext().setAuthentication(auth);
-				}
-			}
-		}
-		
-		filter.doFilter(request, response);
-	}
+        if (token != null) {
+            var email = tokenService.validateToken(token);
+            var result = tokenService.validateToken2(token);
+            //new JwtRequestAttributes(result.get("tenantId"), result.get("userId"));
 
-	private String getTokenByRequest(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
-		if (token == null || !token.startsWith("Bearer ")) {
-			return null;
-		}
+            if (!email.isEmpty()) {
+                var optional = userRepository.buscaPorEmail(email, EnumStatus.ATIVO);
 
-		return token.substring(7);
-	}
+                if (optional.isPresent()) {
+                    var user = optional.get();
+                    var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
+            }
+        }
+
+        filter.doFilter(request, response);
+    }
+
+    private String getTokenByRequest(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            return null;
+        }
+
+        return token.substring(7);
+    }
 
 }

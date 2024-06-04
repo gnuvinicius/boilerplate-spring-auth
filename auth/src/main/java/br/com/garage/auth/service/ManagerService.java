@@ -5,6 +5,9 @@ import br.com.garage.auth.interfaces.rest.dtos.UsuarioRequestDto;
 import br.com.garage.auth.interfaces.rest.dtos.UsuarioResponseDto;
 import br.com.garage.auth.models.Tenant;
 import br.com.garage.auth.models.Usuario;
+import br.com.garage.auth.repositories.TenantRepository;
+import br.com.garage.auth.repositories.UserRepository;
+import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.commons.exceptions.BusinessException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +22,12 @@ public class ManagerService extends BaseService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private TenantRepository tenantRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,67 +38,51 @@ public class ManagerService extends BaseService {
     @Autowired
     private ModelMapper mapper;
 
-
     public UsuarioResponseDto cadastraUsuario(UsuarioRequestDto dto) {
         //TODO
         buscaUsuarioPorEmail(dto.getEmail());
 
         authService.validPasswordPolicies(dto.getPassword());
-        var usuario = new Usuario(dto, passwordEncoder.encode(dto.getPassword()), authService.getCompanyByUserLogged());
+        var usuario = new Usuario(dto, passwordEncoder.encode(dto.getPassword()), authService.getTenant());
         if (dto.isAdmin()) {
             roleService.addRoleAdmin(usuario);
         }
         roleService.addRoleCadastro(usuario);
-        salvarUsuario(usuario);
+        userRepository.save(usuario);
         //if (dto.isSendWelcomeEmail()) {
         // emailService.sendMail(usuario.getEmail(), "", welcomeEmail());
         //}
         return mapper.map(usuario, UsuarioResponseDto.class);
     }
 
-    public void arquiva(UUID id) {
-        Usuario usuario = buscarUsuarioPorId(id);
-        usuario.inativa();
-        salvarUsuario(usuario);
-    }
-
     public List<UsuarioResponseDto> listaTodosUsuarios() {
-        List<Usuario> usuarios = buscarUsuariosPorTenant(authService.getCompanyByUserLogged());
+        List<Usuario> usuarios = userRepository.buscaPorTenant(EnumStatus.ATIVO, authService.getTenant());
         return usuarios.stream().map(u -> mapper.map(u, UsuarioResponseDto.class)).collect(Collectors.toList());
     }
 
-    public Tenant cadastraTenant(TenantRequestDto dto) {
+    public void cadastraUsuarioAdminDefault(TenantRequestDto dto) {
         try {
-            var tenant = salvaNovaTenant(dto);
-            cadastraUsuarioAdminDefault(dto.getAdmin(), tenant);
-            return tenant;
-        } catch (Exception ex) {
-            throw new BusinessException("Não foi possivel concluir o cadastro da sua empresa: " + ex.getMessage());
-        }
-    }
-
-    private Tenant salvaNovaTenant(TenantRequestDto dto) throws Exception {
-        if (buscarTenantPorCpfCnpj(dto.getCnpj()) != null) {
-            throw new BusinessException("empresa ja cadastrada!");
-        }
-        Tenant tenant = dto.toModel();
-        salvarTenant(tenant);
-        return tenant;
-    }
-
-    private void cadastraUsuarioAdminDefault(UsuarioRequestDto request, Tenant tenant) {
-        try {
-            if (buscaUsuarioPorEmail(request.getEmail()) != null) {
-                removeTenant(tenant);
-                throw new BusinessException("já existe um usuario com esse e-mail");
+            if (tenantRepository.buscarPorCnpj(dto.getCnpj()).isPresent()) {
+                throw new BusinessException("empresa ja cadastrada!");
             }
-            var usuario = new Usuario(request, passwordEncoder.encode(request.getPassword()), tenant);
+
+            Tenant tenant = tenantRepository.save(dto.toModel());
+
+            validaUsuarioInexistente(dto, tenant);
+
+            var usuario = new Usuario(dto.getAdmin(), passwordEncoder.encode(dto.getAdmin().getPassword()), tenant);
             roleService.addRoleAdmin(usuario);
             roleService.addRoleCadastro(usuario);
-            salvarUsuario(usuario);
+            userRepository.save(usuario);
         } catch (Exception ex) {
-            removeTenant(tenant);
             throw new IllegalArgumentException(ex.getMessage());
+        }
+    }
+
+    private void validaUsuarioInexistente(TenantRequestDto dto, Tenant tenant) {
+        if (userRepository.buscaPorEmail(dto.getAdmin().getEmail(), EnumStatus.ATIVO).isPresent()) {
+            tenantRepository.delete(tenant);
+            throw new BusinessException("já existe um usuario com esse e-mail");
         }
     }
 }

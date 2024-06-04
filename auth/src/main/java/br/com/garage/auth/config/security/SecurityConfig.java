@@ -59,11 +59,11 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 						.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 						.authorizeHttpRequests(authorize -> authorize
-										.requestMatchers("/notes/auth/**").permitAll()
+										.requestMatchers("/auth/**").permitAll()
 										.requestMatchers(AUTH_WHITE_LIST).permitAll()
-										.requestMatchers(HttpMethod.POST, "/manager/empresas").permitAll()
-										.requestMatchers("/notes/manager/**").hasRole("ADMIN")
-										.requestMatchers("/notes/cadastro/**").hasAnyRole("ADMIN", "USER")
+										.requestMatchers(HttpMethod.POST, "/auth/manager/empresas").permitAll()
+										.requestMatchers("/auth/manager/**").hasRole("ADMIN")
+										.requestMatchers("/notes/**").hasAnyRole("ADMIN", "USER")
 										.anyRequest().authenticated())
 						.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
 

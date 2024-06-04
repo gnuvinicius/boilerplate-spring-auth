@@ -7,6 +7,7 @@ import br.com.garage.auth.interfaces.rest.dtos.UserDto;
 import br.com.garage.auth.interfaces.rest.dtos.UserLoginRequestDto;
 import br.com.garage.auth.models.Tenant;
 import br.com.garage.auth.models.Usuario;
+import br.com.garage.auth.repositories.UserRepository;
 import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.commons.exceptions.BusinessException;
 import br.com.garage.commons.exceptions.NotFoundException;
@@ -40,6 +41,9 @@ public class AuthService extends BaseService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
     public TokenDto auth(UserLoginRequestDto dto) {
 
@@ -56,35 +60,35 @@ public class AuthService extends BaseService {
             tokenDto.tenantName = usuario.getTenant().getNome();
         }
         usuario.atualizaDataUltimoLogin();
-        salvarUsuario(usuario);
+        userRepository.save(usuario);
         return tokenDto;
     }
 
     public void updatePasswordByRefreshToken(RequestRefreshPasswordDto dto) throws BusinessException {
-        var entity = buscaUsuarioPorEmail(dto.getEmail());
+        var usuario = buscaUsuarioPorEmail(dto.getEmail());
 
-        if (!entity.getTokenRefreshPassword().equals(dto.getTokenRefreshPassword())
-                || !entity.isTokenRefreshPasswordValid()) {
+        if (!usuario.getTokenRefreshPassword().equals(dto.getTokenRefreshPassword())
+                || !usuario.isTokenRefreshPasswordValid()) {
             throw new BusinessException(TOKEN_INVALIDO);
         }
         validPasswordPolicies(dto.getNewPassword());
-        entity.alteraPassword(passwordEncoder.encode(dto.getNewPassword()));
-        salvarUsuario(entity);
+        usuario.alteraPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(usuario);
     }
 
-    public Usuario getUSerLogged() {
+    private Usuario getUSerLogged() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         var principal = (UserDetails) authentication.getPrincipal();
 
         return buscaUsuarioPorEmail(principal.getUsername());
     }
 
-    public Tenant getCompanyByUserLogged() throws NotFoundException {
+    public Tenant getTenant() throws NotFoundException {
         if (getUSerLogged().getTenant() == null) {
             throw new IllegalArgumentException(EMPRESA_ESTA_NULO);
         }
 
-        return buscarTenantPorId(getUSerLogged().getTenant().getId());
+        return getUSerLogged().getTenant();
     }
 
     public void validPasswordPolicies(String password) throws BusinessException {
@@ -101,7 +105,7 @@ public class AuthService extends BaseService {
         Usuario usuario = buscaUsuarioPorEmail(email);
         createRefreshToken(usuario);
         enviaEmailRefreshToken(usuario);
-        salvarUsuario(usuario);
+        userRepository.save(usuario);
     }
 
     private void enviaEmailRefreshToken(Usuario usuario) {
@@ -117,13 +121,12 @@ public class AuthService extends BaseService {
     private void createRefreshToken(Usuario usuario) {
         String token = passwordEncoder.encode(usuario.getEmail() + usuario.getPassword() + LocalDateTime.now());
         usuario.ativaRefreshToken(token);
-        salvarUsuario(usuario);
+        userRepository.save(usuario);
     }
 
     public UserDto validateToken(String token) {
         Usuario usuario = buscaUsuarioPorEmail(tokenService.validateToken(token));
         return new UserDto(usuario.getId(), usuario.getEmail(), token);
     }
-
 
 }

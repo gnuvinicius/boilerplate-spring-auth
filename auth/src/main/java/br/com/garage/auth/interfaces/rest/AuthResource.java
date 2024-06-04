@@ -22,8 +22,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @Validated
-@RequestMapping(value = "/notes/auth/api/v1")
-public class AuthController {
+@RequestMapping(value = "/auth/api/v1")
+public class AuthResource {
 
     @Autowired
     private AuthService service;
