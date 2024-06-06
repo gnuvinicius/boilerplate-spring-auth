@@ -1,4 +1,4 @@
-CREATE TABLE public.tb_book (
+CREATE TABLE public.tb_books (
     id uuid NOT NULL,
     atualizado_em timestamp(6) NULL,
     criado_em timestamp(6) NULL,
@@ -16,9 +16,9 @@ CREATE TABLE public.tb_book (
 );
 
 ALTER TABLE
-    public.tb_book
+    public.tb_books
 ADD
-    CONSTRAINT fk_book_tenant FOREIGN KEY (tenant_id) REFERENCES public.tb_tenant(id);
+    CONSTRAINT fk_book_tenant FOREIGN KEY (tenant_id) REFERENCES public.tb_tenants(id);
 
 CREATE TABLE public.tb_notes (
     id uuid NOT NULL,
@@ -41,4 +41,4 @@ CREATE TABLE public.tb_notes (
 ALTER TABLE
     public.tb_notes
 ADD
-    CONSTRAINT fk_note_tenant FOREIGN KEY (tenant_id) REFERENCES public.tb_tenant(id);
+    CONSTRAINT fk_note_tenant FOREIGN KEY (tenant_id) REFERENCES public.tb_tenants(id);
