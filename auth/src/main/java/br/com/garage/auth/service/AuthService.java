@@ -125,7 +125,7 @@ public class AuthService extends BaseService {
     }
 
     public UserDto validateToken(String token) {
-        Usuario usuario = buscaUsuarioPorEmail(tokenService.validateToken(token));
+        Usuario usuario = buscaUsuarioPorEmail(tokenService.loadUserInfo(token));
         return new UserDto(usuario.getId(), usuario.getEmail(), token);
     }
 

@@ -30,10 +30,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         var token = getTokenByRequest(request);
 
         if (token != null) {
-            var email = tokenService.validateToken(token);
-            var result = tokenService.validateToken2(token);
-            //new JwtRequestAttributes(result.get("tenantId"), result.get("userId"));
-
+            var email = tokenService.loadUserInfo(token);
             if (!email.isEmpty()) {
                 var optional = userRepository.buscaPorEmail(email, EnumStatus.ATIVO);
 

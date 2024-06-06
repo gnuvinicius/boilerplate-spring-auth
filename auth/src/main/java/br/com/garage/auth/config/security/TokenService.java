@@ -2,11 +2,13 @@ package br.com.garage.auth.config.security;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jakarta.servlet.ServletContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,11 @@ import br.com.garage.auth.models.Usuario;
 
 @Service
 public class TokenService {
+
+    private static final Logger log = LoggerFactory.getLogger(TokenService.class);
+
+    @Autowired
+    private ServletContext servletContext;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -45,30 +52,28 @@ public class TokenService {
         }
     }
 
-    public String validateToken(String token) {
+    public String loadUserInfo(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            return JWT.require(algorithm).withIssuer("auth").build().verify(token).getSubject();
+            DecodedJWT jwt = JWT.require(algorithm).withIssuer("auth").build().verify(token);
+            loadUserInfo(jwt);
+
+            return jwt.getSubject();
         } catch (JWTVerificationException exception) {
-            return "";
+            log.error(exception.getMessage());
+            return null;
         }
     }
 
-    public Map<String, String> validateToken2(String token) {
-        Map<String, String> result = new HashMap<>();
+    private void loadUserInfo(DecodedJWT jwt) {
 
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            DecodedJWT verify = JWT.require(algorithm).withIssuer("auth").build().verify(token);
-            String roles = verify.getClaim("role").asString();
-            result.put("role", roles);
-            result.put("email", verify.getSubject());
-            result.put("tenantId", verify.getClaim("tenant_id").asString());
-            result.put("userId", verify.getClaim("user_id").asString());
-            return result;
-        } catch (JWTVerificationException exception) {
-            return result;
-        }
+        String roles = jwt.getClaim("role").asString();
+        String email = jwt.getSubject();
+        String tenantId = jwt.getClaim("tenant_id").asString();
+        String userId = jwt.getClaim("user_id").asString();
+
+        var userInfo = new UserAuthInfo(tenantId, userId, email, roles);
+        servletContext.setAttribute("userInfo", userInfo);
     }
 
 }
