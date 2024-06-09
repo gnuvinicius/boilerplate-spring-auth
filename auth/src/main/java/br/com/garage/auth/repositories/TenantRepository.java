@@ -9,9 +9,6 @@ import java.util.UUID;
 
 public interface TenantRepository extends JpaRepository<Tenant, UUID> {
 
-	@Query("SELECT e.email FROM Tenant e WHERE e.id = :id")
-	String getEmailToSendEmail(UUID id);
-
 	@Query("SELECT e FROM Tenant e WHERE e.cnpj = :cnpj")
     Optional<Tenant> buscarPorCnpj(String cnpj);
 

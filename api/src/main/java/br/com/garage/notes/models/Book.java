@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tb_books")
@@ -33,11 +34,11 @@ public class Book extends AggregateRoot implements Serializable {
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
     private final List<Note> notes = new ArrayList<>();
 
-    public Book(String titulo, String descricao, Tenant tenant, Usuario usuario) {
+    public Book(String titulo, String descricao, UUID tenantId, UUID usuarioId) {
         this.titulo = titulo;
         this.descricao = descricao;
-        this.tenant = tenant;
-        this.usuario = usuario;
+        this.tenant = new Tenant(tenantId);
+        this.usuario = new Usuario(usuarioId);
         this.status = EnumStatus.ATIVO;
     }
 

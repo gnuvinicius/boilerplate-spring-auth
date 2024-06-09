@@ -5,6 +5,8 @@ import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.auth.interfaces.rest.dtos.UsuarioRequestDto;
 import br.com.garage.commons.utils.AssertionConcern;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,11 +17,14 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Table(name = "tb_usuarios")
 public class Usuario extends AggregateRoot implements UserDetails {
 
@@ -51,6 +56,10 @@ public class Usuario extends AggregateRoot implements UserDetails {
     private Boolean primeiroAcesso;
 
     private LocalDateTime ultimoAcesso;
+
+    public Usuario(UUID id) {
+        this.id = id;
+    }
 
     public Usuario(String email, String nome, boolean primeiroAcesso) {
         super();

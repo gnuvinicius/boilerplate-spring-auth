@@ -1,8 +1,17 @@
 package br.com.garage.auth.interfaces.rest;
 
+import br.com.garage.auth.config.security.TokenService;
+import br.com.garage.auth.models.Usuario;
+import br.com.garage.auth.repositories.UserRepository;
+import br.com.garage.commons.enums.EnumStatus;
+import br.com.garage.commons.exceptions.BusinessException;
+import br.com.garage.commons.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,12 +37,37 @@ public class AuthResource {
     @Autowired
     private AuthService service;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @ApiResponse(responseCode = "200", description = "Found the book",
             content = {@Content(mediaType = "application/json",
                     schema = @Schema(implementation = TokenDto.class))})
     @PostMapping(value = "login")
     public ResponseEntity<?> auth(@RequestBody UserLoginRequestDto dto) throws AuthenticationException {
-        return ResponseEntity.ok(service.auth(dto));
+
+        var login = new UsernamePasswordAuthenticationToken(dto.email, dto.password);
+        var authenticate = authenticationManager.authenticate(login);
+        String token = tokenService.buildToken(authenticate);
+        Usuario usuario = Utils.requireNotEmpty(userRepository.buscaPorEmail(dto.email, EnumStatus.ATIVO));
+        TokenDto tokenDto = new TokenDto(token, "Bearer", null);
+        if (usuario.getTenant() != null) {
+            if (usuario.getTenant().getStatus().equals(EnumStatus.INATIVO)) {
+                throw new BusinessException("Tenant está inativa!");
+            }
+
+            tokenDto.tenantName = usuario.getTenant().getNome();
+        }
+        usuario.atualizaDataUltimoLogin();
+        userRepository.save(usuario);
+
+        return ResponseEntity.ok(tokenDto);
     }
 
     @GetMapping(value = "/reset-password")
@@ -48,9 +82,4 @@ public class AuthResource {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/validate-token")
-    public ResponseEntity<?> validateToken(@RequestParam(name = "token") String token) throws Exception {
-        UserDto user = service.validateToken(token);
-        return ResponseEntity.ok(user);
-    }
 }

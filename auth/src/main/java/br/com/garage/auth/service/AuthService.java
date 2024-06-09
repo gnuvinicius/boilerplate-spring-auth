@@ -1,20 +1,15 @@
 package br.com.garage.auth.service;
 
-import br.com.garage.auth.config.security.TokenService;
 import br.com.garage.auth.interfaces.rest.dtos.RequestRefreshPasswordDto;
-import br.com.garage.auth.interfaces.rest.dtos.TokenDto;
-import br.com.garage.auth.interfaces.rest.dtos.UserDto;
-import br.com.garage.auth.interfaces.rest.dtos.UserLoginRequestDto;
 import br.com.garage.auth.models.Tenant;
 import br.com.garage.auth.models.Usuario;
 import br.com.garage.auth.repositories.UserRepository;
 import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.commons.exceptions.BusinessException;
 import br.com.garage.commons.exceptions.NotFoundException;
+import br.com.garage.commons.utils.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,16 +22,10 @@ import java.util.regex.Pattern;
 
 @Component
 @Log4j2
-public class AuthService extends BaseService {
+public class AuthService {
 
     private static final String EMPRESA_ESTA_NULO = "O campo empresa esta nulo";
     private static final Exception TOKEN_INVALIDO = null;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private TokenService tokenService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -45,27 +34,8 @@ public class AuthService extends BaseService {
     private UserRepository userRepository;
 
 
-    public TokenDto auth(UserLoginRequestDto dto) {
-
-        var login = new UsernamePasswordAuthenticationToken(dto.email, dto.password);
-        var authenticate = authenticationManager.authenticate(login);
-        String token = tokenService.buildToken(authenticate);
-        Usuario usuario = buscaUsuarioPorEmail(dto.email);
-        TokenDto tokenDto = new TokenDto(token, "Bearer", null);
-        if (usuario.getTenant() != null) {
-            if (usuario.getTenant().getStatus().equals(EnumStatus.INATIVO)) {
-                throw new BusinessException("Tenant está inativa!");
-            }
-
-            tokenDto.tenantName = usuario.getTenant().getNome();
-        }
-        usuario.atualizaDataUltimoLogin();
-        userRepository.save(usuario);
-        return tokenDto;
-    }
-
     public void updatePasswordByRefreshToken(RequestRefreshPasswordDto dto) throws BusinessException {
-        var usuario = buscaUsuarioPorEmail(dto.getEmail());
+        var usuario = Utils.requireNotEmpty(userRepository.buscaPorEmail(dto.getEmail(), EnumStatus.ATIVO));
 
         if (!usuario.getTokenRefreshPassword().equals(dto.getTokenRefreshPassword())
                 || !usuario.isTokenRefreshPasswordValid()) {
@@ -80,7 +50,7 @@ public class AuthService extends BaseService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         var principal = (UserDetails) authentication.getPrincipal();
 
-        return buscaUsuarioPorEmail(principal.getUsername());
+        return Utils.requireNotEmpty(userRepository.buscaPorEmail(principal.getUsername(), EnumStatus.ATIVO));
     }
 
     public Tenant getTenant() throws NotFoundException {
@@ -102,7 +72,7 @@ public class AuthService extends BaseService {
     }
 
     public void solicitaAtualizarPassword(String email) {
-        Usuario usuario = buscaUsuarioPorEmail(email);
+        Usuario usuario = Utils.requireNotEmpty(userRepository.buscaPorEmail(email, EnumStatus.ATIVO));
         createRefreshToken(usuario);
         enviaEmailRefreshToken(usuario);
         userRepository.save(usuario);
@@ -122,11 +92,6 @@ public class AuthService extends BaseService {
         String token = passwordEncoder.encode(usuario.getEmail() + usuario.getPassword() + LocalDateTime.now());
         usuario.ativaRefreshToken(token);
         userRepository.save(usuario);
-    }
-
-    public UserDto validateToken(String token) {
-        Usuario usuario = buscaUsuarioPorEmail(tokenService.loadUserInfo(token));
-        return new UserDto(usuario.getId(), usuario.getEmail(), token);
     }
 
 }

@@ -69,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>br.com.garage</groupId>
-            <artifactId>notes-commons</artifactId>
+            <artifactId>commons</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

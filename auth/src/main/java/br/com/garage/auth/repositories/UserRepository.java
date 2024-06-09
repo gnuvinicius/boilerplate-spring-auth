@@ -20,6 +20,4 @@ public interface UserRepository extends JpaRepository<Usuario, UUID> {
 	@Query("SELECT u FROM Usuario u WHERE u.status = :status AND u.tenant = :tenant")
 	List<Usuario> buscaPorTenant(EnumStatus status, Tenant tenant);
 
-	@Query("SELECT u FROM Usuario u WHERE u.email = :email")
-    Optional<Usuario> findByEmail(String email);
 }

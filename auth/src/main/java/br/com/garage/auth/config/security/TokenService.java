@@ -72,7 +72,7 @@ public class TokenService {
         String tenantId = jwt.getClaim("tenant_id").asString();
         String userId = jwt.getClaim("user_id").asString();
 
-        var userInfo = new UserAuthInfo(tenantId, userId, email, roles);
+        var userInfo = new UserAuthInfo(userId, tenantId, email, roles);
         servletContext.setAttribute("userInfo", userInfo);
     }
 

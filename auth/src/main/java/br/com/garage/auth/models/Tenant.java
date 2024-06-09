@@ -47,7 +47,11 @@ public class Tenant {
 		this(dto.getNome(), endereco, dto.getCnpj());
 	}
 
-	public void ativaTenant() {
+    public Tenant(UUID tenantId) {
+    	this.id = tenantId;
+	}
+
+    public void ativaTenant() {
 		this.status = EnumStatus.ATIVO;
 		this.atualizadoEm = LocalDateTime.now();
 	}
