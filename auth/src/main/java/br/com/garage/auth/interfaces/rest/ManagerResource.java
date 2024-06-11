@@ -49,14 +49,12 @@ public class ManagerResource {
     private ModelMapper mapper;
 
     @GetMapping("/usuarios")
-    public ResponseEntity<?> findAllUsersByCompany() {
-        List<Usuario> usuarios = userRepository
-                .buscaPorTenant(EnumStatus.ATIVO, authService.getTenant());
-        var response = usuarios.stream()
+    public List<UsuarioResponseDto> findAllUsersByCompany() {
+        return userRepository
+                .buscaPorTenant(EnumStatus.ATIVO, authService.getTenant())
+                .stream()
                 .map(u -> mapper.map(u, UsuarioResponseDto.class))
                 .collect(Collectors.toList());
-
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/usuarios")

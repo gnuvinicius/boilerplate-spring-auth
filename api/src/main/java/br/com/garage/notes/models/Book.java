@@ -32,6 +32,7 @@ public class Book extends AggregateRoot implements Serializable {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @OrderBy(value = "atualizadoEm desc")
     private final List<Note> notes = new ArrayList<>();
 
     public Book(String titulo, String descricao, UUID tenantId, UUID usuarioId) {
@@ -41,10 +42,5 @@ public class Book extends AggregateRoot implements Serializable {
         this.usuario = new Usuario(usuarioId);
         this.status = EnumStatus.ATIVO;
     }
-
-    public void adicionaNote(Note note) {
-        this.notes.add(note);
-    }
-
 
 }
