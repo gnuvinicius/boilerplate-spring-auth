@@ -15,8 +15,8 @@ public class UserAuthInfo implements Serializable {
     private final String roles;
 
     public UserAuthInfo(String usuarioId, String tenantId, String email, String roles) {
-        this.usuarioId = UUID.fromString(usuarioId);
-        this.tenantId = UUID.fromString(tenantId);
+        this.usuarioId = usuarioId != null ? UUID.fromString(usuarioId) : null;
+        this.tenantId = tenantId != null ? UUID.fromString(tenantId) : null;
         this.email = email;
         this.roles = roles;
     }

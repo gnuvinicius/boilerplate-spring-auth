@@ -1,5 +1,6 @@
 package br.com.garage.notes.dtos;
 
+import br.com.garage.auth.config.security.UserAuthInfo;
 import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.notes.models.Book;
 import lombok.Data;
@@ -29,5 +30,9 @@ public class BookDTO {
         this.notes = book.getNotes().stream()
                 .filter(n -> n.getStatus().equals(EnumStatus.ATIVO))
                 .map(NoteDTO::new).toList();
+    }
+
+    public Book toModel(UserAuthInfo userInfo) {
+        return new Book(this.titulo, this.descricao, userInfo.getTenantId(), userInfo.getUsuarioId());
     }
 }
