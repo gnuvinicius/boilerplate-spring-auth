@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 public class Usuario extends AggregateRoot implements UserDetails {
 
     @Id
-    @SequenceGenerator(name = "tb_usuarios_id_seq", sequenceName = "tb_usuarios_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_usuarios_id_seq")
-    protected Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_usuario")
+    @SequenceGenerator(name = "seq_usuario", sequenceName = "tb_usuarios_seq", allocationSize = 1)
+    private Long id;
 
     private static final String NULO_OU_VAZIO = "o campo %s não pode ser nulo ou vazio";
 

@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 public class Note extends AggregateRoot implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "seq_notes", sequenceName = "tb_notes_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_notes")
-    protected Long id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_note")
+    @SequenceGenerator(name = "seq_note", sequenceName = "tb_books_seq", allocationSize = 1)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tenant_id", referencedColumnName = "id", nullable = false)

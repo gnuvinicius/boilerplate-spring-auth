@@ -18,9 +18,10 @@ public class Tenant {
 	private static final String NULO_OU_VAZIO = "o campo %s não pode ser nulo ou vazio";
 
 	@Id
-	@SequenceGenerator(name = "tb_tenants_id_seq", sequenceName = "tb_tenants_id_seq", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_tenants_id_seq")
+	@SequenceGenerator(name = "seq_tenant", sequenceName = "tb_tenants_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_tenant")
 	private Long id;
+
 	private EnumStatus status;
 	private String nome;
 	private String endereco;

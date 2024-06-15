@@ -1,7 +1,7 @@
---CREATE SEQUENCE tb_tenants_seq AS SMALLINT INCREMENT 1 START 1;
+CREATE SEQUENCE tb_tenants_seq AS INT INCREMENT 1 START 1;
 
 CREATE TABLE public.tb_tenants (
-    id serial,
+    id integer NOT NULL DEFAULT nextval('tb_tenants_seq'),
     atualizado_em timestamp(6) NULL,
     cnpj varchar(255) NULL,
     criado_em timestamp(6) NULL,
@@ -19,10 +19,10 @@ CREATE TABLE public.tb_tenants (
     CONSTRAINT unique_tenant_cnpj UNIQUE (cnpj)
 );
 
---CREATE SEQUENCE tb_usuarios_seq AS SMALLINT INCREMENT 1 START 1;
+CREATE SEQUENCE tb_usuarios_seq AS INT INCREMENT 1 START 1;
 
 CREATE TABLE public.tb_usuarios (
-    id serial,
+    id integer NOT NULL DEFAULT nextval('tb_usuarios_seq'),
     atualizado_em timestamp(6) NULL,
     criado_em timestamp(6) NULL,
     status int2 NULL,

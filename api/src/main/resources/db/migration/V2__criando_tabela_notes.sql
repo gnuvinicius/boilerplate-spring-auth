@@ -1,7 +1,7 @@
---CREATE SEQUENCE tb_books_seq AS SMALLINT INCREMENT 1 START 1;
+CREATE SEQUENCE tb_books_seq AS INT INCREMENT 1 START 1;
 
 CREATE TABLE public.tb_books (
-    id serial,
+    id integer NOT NULL DEFAULT nextval('tb_books_seq'),
     atualizado_em timestamp(6) NULL,
     criado_em timestamp(6) NULL,
     titulo varchar(255) NULL,
@@ -23,10 +23,10 @@ ADD
     CONSTRAINT fk_book_tenant FOREIGN KEY (tenant_id) REFERENCES public.tb_tenants(id);
 
 
---CREATE SEQUENCE tb_notes_seq AS SMALLINT INCREMENT 1 START 1;
+CREATE SEQUENCE tb_notes_seq AS INT INCREMENT 1 START 1;
 
 CREATE TABLE public.tb_notes (
-    id serial,
+    id integer NOT NULL DEFAULT nextval('tb_notes_seq'),
     atualizado_em timestamp(6) NULL,
     criado_em timestamp(6) NULL,
     titulo varchar(255) NULL,

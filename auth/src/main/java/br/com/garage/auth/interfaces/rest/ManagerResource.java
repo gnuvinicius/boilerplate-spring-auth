@@ -110,7 +110,12 @@ public class ManagerResource {
             var usuario = new Usuario(request.getAdmin(), passwordEncoder.encode(request.getAdmin().getPassword()), tenant);
             roleService.addRoleAdmin(usuario);
             roleService.addRoleCadastro(usuario);
-            userRepository.save(usuario);
+            try {
+                userRepository.save(usuario);
+            } catch (Exception e) {
+                tenantRepository.delete(tenant);
+                throw e;
+            }
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage());
         }

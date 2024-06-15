@@ -20,9 +20,9 @@ import java.util.UUID;
 public class Book extends AggregateRoot implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "seq_book", sequenceName = "tb_books_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_book")
-    protected Long id;
+    @SequenceGenerator(name = "seq_book", sequenceName = "tb_books_id_seq", allocationSize = 1)
+    private Long id;
 
     private String titulo;
 
