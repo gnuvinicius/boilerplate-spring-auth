@@ -11,13 +11,17 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "tb_notes")
 @NoArgsConstructor
 @Getter
 public class Note extends AggregateRoot implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_note")
+    @SequenceGenerator(name = "seq_note", sequenceName = "tb_books_seq", allocationSize = 1)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tenant_id", referencedColumnName = "id", nullable = false)
@@ -35,7 +39,7 @@ public class Note extends AggregateRoot implements Serializable {
     @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
     private Book book;
 
-    public Note(String titulo, String conteudo, UUID usuarioId, UUID tenantId, Book book) {
+    public Note(String titulo, String conteudo, Long usuarioId, Long tenantId, Book book) {
         this.titulo = titulo;
         this.conteudo = conteudo;
         this.usuario = new Usuario(usuarioId);

@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Data
 public class NoteDTO {
-    private UUID id;
+    private Long id;
     private String titulo;
     private String conteudo;
     private LocalDateTime criadoEm;

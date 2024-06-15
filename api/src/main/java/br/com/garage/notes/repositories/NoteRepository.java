@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface NoteRepository extends JpaRepository<Note, UUID> {
 
     @Query(value = "SELECT n FROM Note n WHERE n.usuario.id = :usuarioId AND n.id = :noteId")
-    Optional<Note> buscaNotePorIdAndUsuarioId(UUID noteId, UUID usuarioId);
+    Optional<Note> buscaNotePorIdAndUsuarioId(UUID noteId, Long usuarioId);
 }

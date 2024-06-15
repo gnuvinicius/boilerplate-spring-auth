@@ -1,15 +1,9 @@
 package br.com.garage.auth.models;
 
-import java.util.UUID;
-
-import org.springframework.security.core.GrantedAuthority;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Getter
@@ -19,7 +13,7 @@ public class Role implements GrantedAuthority {
 
 	@Id
 	@Column(name = "role_id")
-	private UUID id;
+	private Long id;
 
 	@Column(nullable = false, unique = true)
 	private String roleName;

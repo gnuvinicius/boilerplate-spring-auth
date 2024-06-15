@@ -1,17 +1,13 @@
 package br.com.garage.auth.models;
 
-import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.auth.interfaces.rest.dtos.TenantRequestDto;
+import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.commons.utils.AssertionConcern;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Entity
@@ -22,7 +18,10 @@ public class Tenant {
 	private static final String NULO_OU_VAZIO = "o campo %s não pode ser nulo ou vazio";
 
 	@Id
-	private UUID id;
+	@SequenceGenerator(name = "seq_tenant", sequenceName = "tb_tenants_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_tenant")
+	private Long id;
+
 	private EnumStatus status;
 	private String nome;
 	private String endereco;
@@ -34,7 +33,6 @@ public class Tenant {
 	private String cnpj;
 
 	public Tenant(String nome, String endereco, String cnpj) throws Exception {
-		this.id = UUID.randomUUID();
 		this.status = EnumStatus.INATIVO;
 		this.nome = nome;
 		this.endereco = endereco;
@@ -47,7 +45,7 @@ public class Tenant {
 		this(dto.getNome(), endereco, dto.getCnpj());
 	}
 
-    public Tenant(UUID tenantId) {
+    public Tenant(Long tenantId) {
     	this.id = tenantId;
 	}
 

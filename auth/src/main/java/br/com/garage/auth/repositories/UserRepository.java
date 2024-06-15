@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Transactional
-public interface UserRepository extends JpaRepository<Usuario, UUID> {
+public interface UserRepository extends JpaRepository<Usuario, Long> {
 
 	@Query("SELECT u FROM Usuario u WHERE u.email = :email AND u.status = :status")
 	Optional<Usuario> buscaPorEmail(String email, EnumStatus status);

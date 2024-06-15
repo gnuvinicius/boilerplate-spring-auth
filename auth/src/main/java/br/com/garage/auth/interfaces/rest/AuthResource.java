@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.garage.auth.service.AuthService;
 import br.com.garage.auth.interfaces.rest.dtos.RequestRefreshPasswordDto;
 import br.com.garage.auth.interfaces.rest.dtos.TokenDto;
-import br.com.garage.auth.interfaces.rest.dtos.UserDto;
 import br.com.garage.auth.interfaces.rest.dtos.UserLoginRequestDto;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +50,7 @@ public class AuthResource {
     @PostMapping(value = "login")
     public ResponseEntity<?> auth(@RequestBody UserLoginRequestDto dto) throws AuthenticationException {
 
-        var login = new UsernamePasswordAuthenticationToken(dto.email, dto.password);
+        UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken(dto.email, dto.password);
         var authenticate = authenticationManager.authenticate(login);
         String token = tokenService.buildToken(authenticate);
         Usuario usuario = Utils.requireNotEmpty(userRepository.buscaPorEmail(dto.email, EnumStatus.ATIVO));

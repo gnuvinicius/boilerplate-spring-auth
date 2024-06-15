@@ -80,7 +80,7 @@ public class ManagerResource {
     }
 
     @DeleteMapping("/usuario")
-    public ResponseEntity<?> arquiva(@RequestParam(name = "id") UUID id) {
+    public ResponseEntity<?> arquiva(@RequestParam(name = "id") Long id) {
         return userRepository.findById(id)
                 .map(usuario -> {
                     usuario.inativa();
@@ -99,7 +99,8 @@ public class ManagerResource {
                 throw new BusinessException("empresa ja cadastrada!");
             }
 
-            Tenant tenant = tenantRepository.save(request.toModel());
+            Tenant entity = request.toModel();
+            Tenant tenant = tenantRepository.save(entity);
 
             if (userRepository.buscaPorEmail(request.getAdmin().getEmail(), EnumStatus.ATIVO).isPresent()) {
                 tenantRepository.delete(tenant);
@@ -109,7 +110,12 @@ public class ManagerResource {
             var usuario = new Usuario(request.getAdmin(), passwordEncoder.encode(request.getAdmin().getPassword()), tenant);
             roleService.addRoleAdmin(usuario);
             roleService.addRoleCadastro(usuario);
-            userRepository.save(usuario);
+            try {
+                userRepository.save(usuario);
+            } catch (Exception e) {
+                tenantRepository.delete(tenant);
+                throw e;
+            }
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex.getMessage());
         }

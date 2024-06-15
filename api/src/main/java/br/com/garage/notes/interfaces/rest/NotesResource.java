@@ -1,8 +1,8 @@
 package br.com.garage.notes.interfaces.rest;
 
-import br.com.garage.auth.config.security.UserAuthInfo;
 import br.com.garage.commons.utils.Utils;
-import br.com.garage.notes.config.userInfo.UserInfo;
+import br.com.garage.commons.utils.userInfo.UserAuthInfo;
+import br.com.garage.commons.utils.userInfo.UserInfo;
 import br.com.garage.notes.dtos.BookDTO;
 import br.com.garage.notes.dtos.NoteDTO;
 import br.com.garage.notes.models.Book;
