@@ -1,12 +1,11 @@
 package br.com.garage.auth.models;
 
-import br.com.garage.commons.models.AggregateRoot;
-import br.com.garage.commons.enums.EnumStatus;
 import br.com.garage.auth.interfaces.rest.dtos.UsuarioRequestDto;
+import br.com.garage.commons.enums.EnumStatus;
+import br.com.garage.commons.models.AggregateRoot;
 import br.com.garage.commons.utils.AssertionConcern;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,16 +16,19 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
 @Table(name = "tb_usuarios")
 public class Usuario extends AggregateRoot implements UserDetails {
+
+    @Id
+    @SequenceGenerator(name = "tb_usuarios_id_seq", sequenceName = "tb_usuarios_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tb_usuarios_id_seq")
+    protected Long id;
 
     private static final String NULO_OU_VAZIO = "o campo %s não pode ser nulo ou vazio";
 
@@ -57,7 +59,7 @@ public class Usuario extends AggregateRoot implements UserDetails {
 
     private LocalDateTime ultimoAcesso;
 
-    public Usuario(UUID id) {
+    public Usuario(Long id) {
         this.id = id;
     }
 
@@ -140,8 +142,7 @@ public class Usuario extends AggregateRoot implements UserDetails {
     }
 
     public void ativaRefreshToken(String token) {
-        token = token.replace("/", "");
-        this.tokenRefreshPassword = token;
+        this.tokenRefreshPassword = token.replace("/", "");
         this.tokenRefreshPasswordValid = true;
     }
 

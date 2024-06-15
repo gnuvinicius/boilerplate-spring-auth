@@ -19,6 +19,11 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Book extends AggregateRoot implements Serializable {
 
+    @Id
+    @SequenceGenerator(name = "seq_book", sequenceName = "tb_books_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_book")
+    protected Long id;
+
     private String titulo;
 
     private String descricao;
@@ -35,7 +40,7 @@ public class Book extends AggregateRoot implements Serializable {
     @OrderBy(value = "atualizadoEm desc")
     private final List<Note> notes = new ArrayList<>();
 
-    public Book(String titulo, String descricao, UUID tenantId, UUID usuarioId) {
+    public Book(String titulo, String descricao, Long tenantId, Long usuarioId) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.tenant = new Tenant(tenantId);

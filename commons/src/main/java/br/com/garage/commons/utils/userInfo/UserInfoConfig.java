@@ -1,4 +1,4 @@
-package br.com.garage.notes.config.userInfo;
+package br.com.garage.commons.utils.userInfo;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

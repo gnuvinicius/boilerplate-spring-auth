@@ -1,20 +1,19 @@
 package br.com.garage.notes.dtos;
 
-import br.com.garage.auth.config.security.UserAuthInfo;
 import br.com.garage.commons.enums.EnumStatus;
+import br.com.garage.commons.utils.userInfo.UserAuthInfo;
 import br.com.garage.notes.models.Book;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 
 @NoArgsConstructor
 @Data
 public class BookDTO {
-    public UUID id;
+    public Long id;
     private String titulo;
     private String descricao;
     private List<NoteDTO> notes;

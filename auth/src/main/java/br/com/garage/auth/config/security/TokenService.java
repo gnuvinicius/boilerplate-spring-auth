@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.stream.Collectors;
 
+import br.com.garage.commons.utils.userInfo.UserAuthInfo;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ public class TokenService {
         String tenantId = jwt.getClaim("tenant_id").asString();
         String userId = jwt.getClaim("user_id").asString();
 
-        var userInfo = new UserAuthInfo(userId, tenantId, email, roles);
+        var userInfo = new UserAuthInfo(Long.parseLong(userId), Long.parseLong(tenantId), email, roles);
         servletContext.setAttribute("userInfo", userInfo);
     }
 

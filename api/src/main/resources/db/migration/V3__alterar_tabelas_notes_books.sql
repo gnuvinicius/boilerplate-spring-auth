@@ -1,4 +1,4 @@
-alter table tb_notes add column usuario_id UUID default null;
+alter table tb_notes add column usuario_id integer default null;
 
 ALTER TABLE
     public.tb_notes
@@ -7,7 +7,7 @@ ADD
 
 
 
-alter table tb_books add column usuario_id UUID default null;
+alter table tb_books add column usuario_id integer default null;
 
 ALTER TABLE
     public.tb_books

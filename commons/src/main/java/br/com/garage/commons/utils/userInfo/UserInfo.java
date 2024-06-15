@@ -1,4 +1,4 @@
-package br.com.garage.notes.config.userInfo;
+package br.com.garage.commons.utils.userInfo;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

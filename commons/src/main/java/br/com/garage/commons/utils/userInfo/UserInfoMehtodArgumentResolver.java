@@ -1,6 +1,5 @@
-package br.com.garage.notes.config.userInfo;
+package br.com.garage.commons.utils.userInfo;
 
-import br.com.garage.auth.config.security.UserAuthInfo;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

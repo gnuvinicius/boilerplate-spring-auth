@@ -1,11 +1,13 @@
+--CREATE SEQUENCE tb_books_seq AS SMALLINT INCREMENT 1 START 1;
+
 CREATE TABLE public.tb_books (
-    id uuid NOT NULL,
+    id serial,
     atualizado_em timestamp(6) NULL,
     criado_em timestamp(6) NULL,
     titulo varchar(255) NULL,
     descricao varchar(255) NULL,
     status int2 NULL,
-    tenant_id uuid NOT NULL,
+    tenant_id integer NOT NULL,
     CONSTRAINT book_pkey PRIMARY KEY (id),
     CONSTRAINT book_status_check CHECK (
         (
@@ -20,15 +22,18 @@ ALTER TABLE
 ADD
     CONSTRAINT fk_book_tenant FOREIGN KEY (tenant_id) REFERENCES public.tb_tenants(id);
 
+
+--CREATE SEQUENCE tb_notes_seq AS SMALLINT INCREMENT 1 START 1;
+
 CREATE TABLE public.tb_notes (
-    id uuid NOT NULL,
+    id serial,
     atualizado_em timestamp(6) NULL,
     criado_em timestamp(6) NULL,
     titulo varchar(255) NULL,
     descricao varchar(255) NULL,
     status int2 NULL,
-    tenant_id uuid NOT NULL,
-    book_id uuid NOT NULL,
+    tenant_id integer NOT NULL,
+    book_id integer NOT NULL,
     CONSTRAINT note_pkey PRIMARY KEY (id),
     CONSTRAINT note_status_check CHECK (
         (

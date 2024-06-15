@@ -12,5 +12,5 @@ public interface BookRepository extends JpaRepository<Book, UUID> {
     @Query(value = "SELECT b FROM Book b" +
             " WHERE b.tenant.id = :tenantId" +
             " ORDER BY b.atualizadoEm DESC")
-    List<Book> buscarTodosBook(UUID tenantId);
+    List<Book> buscarTodosBook(Long tenantId);
 }
