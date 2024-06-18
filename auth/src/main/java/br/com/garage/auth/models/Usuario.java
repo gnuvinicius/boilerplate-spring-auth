@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -72,10 +73,10 @@ public class Usuario extends AggregateRoot implements UserDetails {
         this.tokenRefreshPasswordValid = false;
     }
 
-    public Usuario(UsuarioRequestDto dto, String passwordEncoded, Tenant tenant) {
+    public Usuario(UsuarioRequestDto dto, Long tenantId, PasswordEncoder passwordEncoder) {
         this(dto.getEmail(), dto.getNome(), dto.isPrimeiroAcesso());
-        this.password = passwordEncoded;
-        this.tenant = tenant;
+        this.tenant = new Tenant(tenantId);
+        this.password = passwordEncoder.encode(dto.getPassword());
         valida();
     }
 
@@ -150,6 +151,16 @@ public class Usuario extends AggregateRoot implements UserDetails {
         AssertionConcern.ValideIsNotEmptyOrBlank(email, String.format(NULO_OU_VAZIO, "email"));
         AssertionConcern.ValideIsNotEmptyOrBlank(nome, String.format(NULO_OU_VAZIO, "nome"));
         AssertionConcern.ValideIsNotEmptyOrBlank(password, String.format(NULO_OU_VAZIO, "password"));
+    }
+
+    public void addRoles(EntityManager manager, String[] roleNameList) {
+        for (String roleName : roleNameList) {
+            Role role = manager.createQuery("SELECT r FROM Role r WHERE r.roleName = :roleName", Role.class)
+                    .setParameter("roleName", roleName)
+                    .getSingleResult();
+
+            this.getRoles().add(role);
+        }
     }
 
 }

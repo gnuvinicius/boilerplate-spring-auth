@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT u FROM Usuario u WHERE u.email = :email AND u.status = :status")
 	Optional<Usuario> buscaPorEmail(String email, EnumStatus status);
 	
-	@Query("SELECT u FROM Usuario u WHERE u.status = :status AND u.tenant = :tenant")
-	List<Usuario> buscaPorTenant(EnumStatus status, Tenant tenant);
+	@Query("SELECT u FROM Usuario u WHERE u.status = :status AND u.tenant.id = :tenantId")
+	List<Usuario> buscaPorTenant(EnumStatus status, Long tenantId);
 
 }

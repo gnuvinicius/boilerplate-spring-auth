@@ -6,6 +6,7 @@ import br.com.garage.commons.utils.AssertionConcern;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +34,8 @@ public class Tenant {
 	private String cnpj;
 
 	public Tenant(String nome, String endereco, String cnpj) throws Exception {
+		Assert.hasLength(nome,"nome é obrigatorio");
+
 		this.status = EnumStatus.INATIVO;
 		this.nome = nome;
 		this.endereco = endereco;
