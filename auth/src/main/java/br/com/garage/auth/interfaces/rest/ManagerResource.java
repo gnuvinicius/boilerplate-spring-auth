@@ -65,7 +65,7 @@ public class ManagerResource {
         if (request.isAdmin()) {
             usuario.addRoles(manager, new String[]{"ROLE_ADMIN"});
         }
-        usuario.addRoles(manager, new String[]{"ROLE_ADMIN"});
+        usuario.addRoles(manager, new String[]{"ROLE_USER"});
         userRepository.save(usuario);
 
         var response = mapper.map(usuario, UsuarioResponseDto.class);

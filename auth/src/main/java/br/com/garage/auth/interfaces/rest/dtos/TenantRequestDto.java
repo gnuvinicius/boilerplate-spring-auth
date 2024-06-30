@@ -1,6 +1,8 @@
 package br.com.garage.auth.interfaces.rest.dtos;
 
 import br.com.garage.auth.models.Tenant;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +17,9 @@ public class TenantRequestDto {
     @NotNull
     @NotEmpty
     private String nome;
-    private String endereco;
+
+    @NotNull
+    private EnderecoDto endereco;
 
     @NotEmpty
     @NotNull
@@ -26,6 +30,18 @@ public class TenantRequestDto {
     private UsuarioRequestDto admin;
 
     public Tenant toModel() throws Exception {
-        return new Tenant(this.nome, this.endereco, this.cnpj);
+
+        return new Tenant(this.nome, enderecoToString(), this.cnpj);
+    }
+
+    private String enderecoToString() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String endereco = objectMapper
+                .writeValueAsString(objectMapper.writeValueAsString(this.endereco));
+
+        endereco = endereco.replaceAll("\\\\", "");
+        endereco = endereco.replace("\"{", "{");
+        endereco = endereco.replace("}\"", "}");
+        return endereco;
     }
 }

@@ -6,6 +6,7 @@ import br.com.garage.commons.utils.AssertionConcern;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class Tenant {
 
 	private EnumStatus status;
 	private String nome;
+
 	private String endereco;
 	private String email;
 	private LocalDateTime criadoEm;
