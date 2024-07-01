@@ -1,0 +1,89 @@
+<div class="gym-container">
+  <div class="ctn-content">
+    <div class="header-content">
+      <p>Produtos</p>
+      <div>
+        <p-button (onClick)="salvar()" routerLinkActive="router-link-active" class="add-button" label="salvar"
+          size="small" />
+        <p-button (onClick)="showDialog()" routerLinkActive="router-link-active" class="cat-button" [outlined]="true"
+          label="categorias" size="small" />
+
+        <p-button (onClick)="navigateTo('/produtos')" routerLinkActive="router-link-active" class="cat-button"
+          [outlined]="true" severity="secondary" label="cancelar" size="small" />
+      </div>
+    </div>
+
+    <p-card>
+      <div class="form-card">
+        <form class="form-container" [style.fontSize.px]="12" [formGroup]="productForm">
+          <div class="input-form">
+            <p class="input-label">Título</p>
+            <input class="input-field" type="text" formControlName="titulo" pInputText />
+          </div>
+
+          <div class="input-form">
+            <p class="input-label">Descrição</p>
+            <textarea class="input-textarea-field" rows="2" cols="34" formControlName="descricao" pInputTextarea>
+            </textarea>
+          </div>
+
+          <div class="input-form">
+            <p class="input-label">Valor</p>
+            <input class="input-field" type="text" formControlName="valor" pInputText />
+          </div>
+
+          <div class="input-form">
+            <p class="input-label">Categorias</p>
+            <p-multiSelect formControlName="categorias" [options]="categorias" optionLabel="name"
+              placeholder="Selecione..." />
+          </div>
+
+          <div class="input-form">
+            <p class="input-label">Imagens</p>
+            <input class="input-field" type="file" multiple formControlName="anexos" (change)="detectFiles($event)"
+              pInputText />
+          </div>
+        </form>
+        <div class="images-area">
+          <div>
+            <p>imagens</p>
+          </div>
+          <div class="image-ctn">
+            <img width="200px"
+              src="https://cottonon.com/dw/image/v2/BBDS_PRD/on/demandware.static/-/Sites-catalog-master-men/default/dw9c83c6aa/3611220/3611220-01-2.jpg?sw=1920&sh=2880&sm=fit" />
+            <p class="del-btn">excluir</p>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
+
+<p-dialog header="Categorias" [modal]="true" [(visible)]="visible" [style]="{ width: '50rem' }">
+  <div class="cat-form">
+    <input class="input-cat-field" type="text" pInputText placeholder="Título" />
+    <p-button (onClick)="showDialog()" routerLinkActive="router-link-active" class="cat-button" label="salvar"
+      size="small" />
+  </div>
+
+  <p-table [value]="categorias" [tableStyle]="{ 'min-width': '40rem' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>código</th>
+        <th>título</th>
+        <th>ações</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-categoria>
+      <tr>
+        <td>{{ categoria.code }}</td>
+        <td>{{ categoria.name }}</td>
+        <td>
+          <div class="actions-opt">
+            <p (click)="excluirCategoria(categoria)" class="del-btn">excluir</p>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</p-dialog>

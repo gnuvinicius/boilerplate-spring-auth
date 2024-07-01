@@ -1,0 +1,15 @@
+<div class="ctn-header">
+  <div class="header-menu">
+    <p [routerLink]="['/home']" class="header-menu-title">header</p>
+    <p [routerLink]="['/produtos']" routerLinkActive="router-link-active" class="header-menu-option">
+      produtos
+    </p>
+    <p [routerLink]="['/vendas']" class="header-menu-option">vendas</p>
+    <p [routerLink]="['/clientes']" class="header-menu-option">clientes</p>
+  </div>
+
+  <div>
+    <p-menu #menu [model]="controlItens" [popup]="true"></p-menu>
+    <p class="header-menu-control" (click)="menu.toggle($event)">Vinícius C.</p>
+  </div>
+</div>
