@@ -1,5 +1,5 @@
 spring:
-  application.name: STORE-API
+  application.name: GARAGE-API
   jpa:
     properties:
       hibernate:
