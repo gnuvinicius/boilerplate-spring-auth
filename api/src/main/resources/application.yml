@@ -1,0 +1,41 @@
+spring:
+  application.name: GARAGE-API
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+    url: jdbc:postgresql://localhost:5432/store_d
+    username: postgres
+    password: 2AkByM4NfHFkeJz
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/store_d
+    user: postgres
+    password: 2AkByM4NfHFkeJz
+    schemas:
+      - public
+    locations:
+      - classpath:db/migration
+
+  # springdoc:
+  #   swagger-ui:
+  #     disable-swagger-default-url: true
+  #     path: /notes/api/v1/swagger
+  #   api-docs:
+  #     path: /notes/v3/api-docs/swagger-config
+
+  logging:
+    level:
+      org:
+        hibernate:
+          validator: DEBUG
+        springframework:
+          web: DEBUG

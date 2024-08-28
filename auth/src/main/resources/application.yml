@@ -1,0 +1,5 @@
+spring:
+  application.name: auth
+
+jwt:
+  secret: 8c4658aaa9defe81f801d56644c8ba41e4fea582
